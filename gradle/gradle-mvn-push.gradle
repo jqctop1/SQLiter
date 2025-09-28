@@ -1,0 +1,55 @@
+def getReleaseRepositoryUrl() {
+  return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL : readPropertyFromProperties('RELEASE_REPOSITORY_URL')
+}
+
+def readPropertyFromProperties(String key) {
+  Properties properties = new Properties()
+  try {
+    properties.load(project.rootProject.file('repository.properties').newDataInputStream())
+  } catch (Exception e) {
+    println("load local properties failed msg:${e.message}")
+  }
+  return properties.getProperty(key)
+}
+
+def getRepositoryUsername() {
+  return hasProperty('REPOSITORY_USERNAME') ? REPOSITORY_USERNAME : readPropertyFromProperties('REPOSITORY_USERNAME')
+}
+
+def getRepositoryPassword() {
+  return hasProperty('REPOSITORY_PASSWORD') ? REPOSITORY_PASSWORD : readPropertyFromProperties('REPOSITORY_PASSWORD')
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "installLocally"
+            url = "${rootProject.buildDir}/localMaven"
+        }
+        /**
+         * Want to push to an internal repository for testing?
+         * Set the following properties in ~/.gradle/gradle.properties.
+         *
+         * internalUrl=YOUR_INTERNAL_URL
+         * internalUsername=YOUR_USERNAME
+         * internalPassword=YOUR_PASSWORD
+         */
+        maven {
+          name = "internal"
+          url = getReleaseRepositoryUrl()
+          allowInsecureProtocol = true
+          credentials(HttpHeaderCredentials) {
+            name = getRepositoryUsername()
+            value = getRepositoryPassword()
+          }
+          authentication {
+            header(HttpHeaderAuthentication)
+          }
+        }
+    }
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    setPreserveFileTimestamps false
+    setReproducibleFileOrder true
+}

@@ -77,6 +77,8 @@ internal fun dbOpen(
     verboseDataCalls: Boolean
 ): SqliteDatabase {
 
+    logging.v { "dbOpen path [$path]" }
+
     val sqliteFlags = if (openFlags.contains(OpenFlags.CREATE_IF_NECESSARY)) {
         SQLITE_OPEN_READWRITE or SQLITE_OPEN_CREATE;
     } else if (openFlags.contains(OpenFlags.OPEN_READONLY)) {

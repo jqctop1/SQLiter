@@ -2,8 +2,7 @@ package = co.touchlab.sqliter.sqlite3
 headers = sqlite3.h
 headerFilter = sqlite3*.h
 
-linkerOpts.linux_x64 = -lpthread -ldl
-linkerOpts.macos_x64 = -lpthread -ldl
+linkerOpts = -lpthread -ldl -Llibs/ohosArm64 -lsqlcipher
 
 noStringConversion = sqlite3_prepare_v2 sqlite3_prepare_v3
 

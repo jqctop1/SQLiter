@@ -37,6 +37,7 @@ gradle-app.setting
 # local project files
 lib/
 .idea/
+.kotlin/
 proto/compiler/protoc-artifacts
 proto/compiler/tests
 
